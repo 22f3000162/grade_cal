@@ -255,6 +255,13 @@
 .small-muted{font-size:.9rem;color:#555}
 
 
+.warning-line{color:#b91c1c;font-weight:600;margin-top:6px}
+.footer-note{
+  margin:24px 0 0; background:#fff3cd; border:1px solid #ffeeba;
+  color:#856404; padding:12px 16px; border-radius:10px; text-align:center
+}
+
+
     </style>
 </head>
 <body>
@@ -300,6 +307,12 @@
                     </ul>
                 </div>
             </div>
+            <div class="footer-note" id="globalDisclaimer">
+  ⚠️ This is a calculator, not your official score. Please check your dashboard
+   for the final result. Until then, enjoy the term-break , best of luck for your next term! 🙂
+</div>
+
+
         </div>
     </div>
 
@@ -437,23 +450,24 @@
         calculate: ([ga,q2,roe,f]) => 0.3*ga + 0.20*q2 + 0.2*roe + 0.3*f,
         eligibility: "Submit ≥1 of first two GAs & avg best 2 of first 3 ≥ 40%"
       },
-      // ---- FIXED: Business Analytics (sum with ET cap 40) ----
-      "Business Analytics": {
-        inputs: [
-          {label:"Best 2 Assignments (sum)", hint:"Out of 40"},
-          {label:"Quiz 1", hint:"Out of 20"},
-          {label:"Quiz 2", hint:"Out of 20"},
-          {label:"Final Exam (raw)", hint:"Out of 45; capped to 40"}
-        ],
-        formula: "T = A(40) + Qz(20) + F(≤40) where Qz = 0.7·max(Q1,Q2) + 0.3·min(Q1,Q2)",
-        pills: ["Final cap 40"],
-        calculate: ([a40,q1,q2,fRaw]) => {
-          const qz = 0.7*Math.max(q1,q2) + 0.3*Math.min(q1,q2);
-          const f = Math.min(40, fRaw);
-          return a40 + qz + f; // out of 100
-        },
-        eligibility: "≥1 of first 2 assignments; Quiz ≥35%; End-term ≥25%"
-      },
+      // ---- FIXED: Business Analytics (percent inputs; internal weighting) ----
+"Business Analytics": {
+  inputs: [
+    {label:"Assignments (best 2 of 3)", hint:"Enter 0–100"},
+    {label:"Quiz 1", hint:"0–100"},
+    {label:"Quiz 2", hint:"0–100"},
+    {label:"Final Exam", hint:"0–100"}
+  ],
+  formula: "T = 0.4·A + 0.2·Qz + 0.4·F, where Qz = 0.7·max(Q1,Q2) + 0.3·min(Q1,Q2)",
+  pills: ["All inputs 0–100"],
+  calculate: ([aPct,q1Pct,q2Pct,fPct]) => {
+    const qz = 0.7*Math.max(q1Pct,q2Pct) + 0.3*Math.min(q1Pct,q2Pct); // 0–100
+    return 0.4*aPct + 0.2*qz + 0.4*fPct; // out of 100
+  },
+  eligibility: "≥1 assignment submitted; Quiz ≥35%; End-term ≥25%"
+},
+
+
       "Tools in Data Science": {
         inputs: [{label:"Best 4 GA (out of 7)"},{label:"ROE1"},{label:"Project 1"},{label:"Project 2"},{label:"Final Exam"}],
         formula: "T = 0.15·GAA + 0.2·ROE1 + 0.2·P1 + 0.2·P2 + 0.25·F",
@@ -692,61 +706,117 @@
     updateFormulaDisplay();
   }
 
-  function updateFormulaDisplay() {
-    document.getElementById('formulaDisplay').textContent = currentCourse.formula;
+function updateFormulaDisplay() {
+  document.getElementById('formulaDisplay').textContent = currentCourse.formula;
 
-    // info list
-    const infoList = document.getElementById('infoList');
-    infoList.innerHTML = `
-      <li>Enter 0 for components you didn't attempt</li>
-      <li>All scores are percentages (0–100) unless noted</li>
-      <li>Eligibility: ${currentCourse.eligibility}</li>
-      <li>Result follows the formula shown above</li>
-    `;
+  const infoList = document.getElementById('infoList');
+  infoList.innerHTML = `
+    <li>Enter 0 for components you didn't attempt</li>
+    <li>All scores are percentages (0–100) unless noted</li>
+    <li>Eligibility: ${currentCourse.eligibility}</li>
+    <li>Result follows the formula shown above</li>
+  `;
 
-    // pills (caps/bonus/etc)
-    const formulaBox = document.querySelector('.formula-display');
-    // remove old pills
-    formulaBox.querySelectorAll('.pill').forEach(p => p.remove());
-    if (currentCourse.pills && currentCourse.pills.length) {
-      currentCourse.pills.forEach(text => {
-        const pill = document.createElement('span');
-        pill.className = 'pill';
-        pill.textContent = text;
-        formulaBox.insertBefore(pill, document.getElementById('formulaDisplay'));
-      });
-    }
-  }
-
-  function calculateGrade() {
-    const inputs = Array.from(document.querySelectorAll('#inputGrid input'));
-    const values = inputs.map(input => {
-      const v = parseFloat(input.value);
-      return Number.isFinite(v) ? v : 0;
+  // pills (caps/bonus/etc)
+  const formulaBox = document.querySelector('.formula-display');
+  formulaBox.querySelectorAll('.pill').forEach(p => p.remove());
+  if (currentCourse.pills && currentCourse.pills.length) {
+    currentCourse.pills.forEach(text => {
+      const pill = document.createElement('span');
+      pill.className = 'pill';
+      pill.textContent = text;
+      formulaBox.insertBefore(pill, document.getElementById('formulaDisplay'));
     });
-    const totalScore = currentCourse.calculate(values);
-    const grade = getGradeFromScore(totalScore);
-
-    document.getElementById('resultValue').textContent = totalScore.toFixed(2);
-    const gradeLine = [
-      `Grade: ${grade}`,
-      `<span class="small-muted"> | Pass threshold: 40 (E)</span>`
-    ].join('');
-    document.getElementById('resultGrade').innerHTML = gradeLine;
-    document.getElementById('resultSection').classList.add('active');
-
-    // Add grade scale legend once
-    let legend = document.getElementById('gradeLegend');
-    if (!legend) {
-      legend = document.createElement('div');
-      legend.id = 'gradeLegend';
-      legend.className = 'hint';
-      legend.style.textAlign = 'center';
-      legend.style.marginTop = '10px';
-      legend.textContent = "Scale: S ≥90, A ≥80, B ≥70, C ≥60, D ≥50, E ≥40, else U";
-      document.getElementById('resultSection').appendChild(legend);
-    }
   }
+
+  // BA-only one-liner warning
+  const selectedName = document.getElementById('courseSelect').value;
+  const existing = document.getElementById('baWarning');
+  if (existing) existing.remove();
+  if (selectedName === 'Business Analytics') {
+    const li = document.createElement('li');
+    li.id = 'baWarning';
+    li.className = 'warning-line';
+    li.textContent = "Business Analytics: this calculator might be slightly off in special/edge cases.";
+    infoList.appendChild(li);
+  }
+}
+
+
+  function checkEligibility(level, courseName, values) {
+  // Return {ok: boolean, reason?: string}
+  switch (courseName) {
+    case "Machine Learning Practice": {
+      const oppe1 = values[1], oppe2 = values[2];
+      return (oppe1 >= 40 || oppe2 >= 40)
+        ? { ok: true }
+        : { ok: false, reason: "OPPE1 or OPPE2 must be ≥ 40%" };
+    }
+    case "Introduction to Big Data": {
+      const oppe1 = values[1], oppe2 = values[2];
+      return (oppe1 >= 40 || oppe2 >= 40)
+        ? { ok: true }
+        : { ok: false, reason: "OPPE1 or OPPE2 must be ≥ 40%" };
+    }
+    case "Programming in C": {
+      const oppe1 = values[3], oppe2 = values[4];
+      return (oppe1 >= 40 || oppe2 >= 40)
+        ? { ok: true }
+        : { ok: false, reason: "OPPE1 or OPPE2 must be ≥ 40%" };
+    }
+    case "System Commands": {
+      const bpt = values[2], ope = values[3];
+      return (bpt >= 40 && ope >= 40)
+        ? { ok: true }
+        : { ok: false, reason: "BPT Average ≥ 40% and OPE ≥ 40% required" };
+    }
+    case "DBMS": {
+      const ope = values[5];
+      return (ope >= 35)
+        ? { ok: true }
+        : { ok: false, reason: "OPE must be ≥ 35%" };
+    }
+    default:
+      return { ok: true };
+  }
+}
+
+
+function calculateGrade() {
+  const inputs = Array.from(document.querySelectorAll('#inputGrid input'));
+  const values = inputs.map(input => {
+    const v = parseFloat(input.value);
+    return Number.isFinite(v) ? v : 0;
+  });
+
+  const totalScore = currentCourse.calculate(values);
+  let grade = getGradeFromScore(totalScore);
+
+  // NEW: eligibility override (OPPE-related)
+  const courseName = document.getElementById('courseSelect').value;
+  const elig = checkEligibility(currentLevel, courseName, values);
+  let note = '<span class="small-muted"> | Pass threshold: 40 (E)</span>';
+  if (!elig.ok) {
+    grade = 'U';
+    note = ` <span class="small-muted">| Eligibility not met: ${elig.reason}</span>`;
+  }
+
+  document.getElementById('resultValue').textContent = totalScore.toFixed(2);
+  document.getElementById('resultGrade').innerHTML = `Grade: ${grade}${note}`;
+  document.getElementById('resultSection').classList.add('active');
+
+  let legend = document.getElementById('gradeLegend');
+  if (!legend) {
+    legend = document.createElement('div');
+    legend.id = 'gradeLegend';
+    legend.className = 'hint';
+    legend.style.textAlign = 'center';
+    legend.style.marginTop = '10px';
+    legend.textContent = "Scale: S ≥90, A ≥80, B ≥70, C ≥60, D ≥50, E ≥40, else U";
+    document.getElementById('resultSection').appendChild(legend);
+  }
+}
+
 
   // wire button
   window.calculateGrade = calculateGrade;
