@@ -245,6 +245,16 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        .pill {
+  display:inline-block;padding:4px 10px;border-radius:999px;
+  background:#e9f5ff;border:1px solid #bee3f8;color:#1e3a8a;
+  font-size:.85rem;margin-right:8px;margin-top:8px
+}
+.hint{font-size:.9rem;color:#6b7280;margin-top:6px}
+.small-muted{font-size:.9rem;color:#555}
+
+
     </style>
 </head>
 <body>
@@ -294,524 +304,458 @@
     </div>
 
     <script>
-        const courses = {
-            foundation: {
-                "Mathematics for Data Science 1": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "Final Exam"],
-                    formula: "T = 0.1*GAA + max(0.6*F + 0.2*max(Qz1, Qz2), 0.4*F + 0.2*Qz1 + 0.3*Qz2)",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, f] = values;
-                        const option1 = 0.6 * f + 0.2 * Math.max(qz1, qz2);
-                        const option2 = 0.4 * f + 0.2 * qz1 + 0.3 * qz2;
-                        return 0.1 * gaa + Math.max(option1, option2);
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                },
-                "English 1": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "Final Exam"],
-                    formula: "T = 0.1*GAA + max(0.6*F + 0.2*max(Qz1, Qz2), 0.4*F + 0.2*Qz1 + 0.3*Qz2)",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, f] = values;
-                        const option1 = 0.6 * f + 0.2 * Math.max(qz1, qz2);
-                        const option2 = 0.4 * f + 0.2 * qz1 + 0.3 * qz2;
-                        return 0.1 * gaa + Math.max(option1, option2);
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                },
-                "Computational Thinking": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "Final Exam"],
-                    formula: "T = 0.1*GAA + max(0.6*F + 0.2*max(Qz1, Qz2), 0.4*F + 0.2*Qz1 + 0.3*Qz2)",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, f] = values;
-                        const option1 = 0.6 * f + 0.2 * Math.max(qz1, qz2);
-                        const option2 = 0.4 * f + 0.2 * qz1 + 0.3 * qz2;
-                        return 0.1 * gaa + Math.max(option1, option2);
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                },
-                "Statistics for Data Science 1": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "Final Exam", "Extra Activity Bonus (0-5)"],
-                    formula: "T = 0.1*GAA + max(0.6*F + 0.2*max(Qz1, Qz2), 0.4*F + 0.2*Qz1 + 0.3*Qz2) + Bonus",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, f, bonus] = values;
-                        const option1 = 0.6 * f + 0.2 * Math.max(qz1, qz2);
-                        const option2 = 0.4 * f + 0.2 * qz1 + 0.3 * qz2;
-                        return Math.min(105, 0.1 * gaa + Math.max(option1, option2) + bonus);
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                },
-                "Mathematics for Data Science 2": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "Final Exam"],
-                    formula: "T = 0.1*GAA + max(0.6*F + 0.2*max(Qz1, Qz2), 0.4*F + 0.2*Qz1 + 0.3*Qz2)",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, f] = values;
-                        const option1 = 0.6 * f + 0.2 * Math.max(qz1, qz2);
-                        const option2 = 0.4 * f + 0.2 * qz1 + 0.3 * qz2;
-                        return 0.1 * gaa + Math.max(option1, option2);
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                },
-                "English 2": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "Final Exam"],
-                    formula: "T = 0.1*GAA + max(0.6*F + 0.2*max(Qz1, Qz2), 0.4*F + 0.2*Qz1 + 0.3*Qz2)",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, f] = values;
-                        const option1 = 0.6 * f + 0.2 * Math.max(qz1, qz2);
-                        const option2 = 0.4 * f + 0.2 * qz1 + 0.3 * qz2;
-                        return 0.1 * gaa + Math.max(option1, option2);
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                },
-                "Intro to Python Programming": {
-                    inputs: ["GAA1 (Objective)", "GAA2 (Programming)", "Quiz 1", "OPPE1", "OPPE2", "Final Exam"],
-                    formula: "T = 0.1*GAA1 + 0.1*GAA2 + 0.1*Qz1 + 0.4*F + 0.25*max(PE1,PE2) + 0.15*min(PE1,PE2)",
-                    calculate: (values) => {
-                        const [gaa1, gaa2, qz1, pe1, pe2, f] = values;
-                        const maxPE = Math.max(pe1, pe2);
-                        const minPE = Math.min(pe1, pe2);
-                        return Math.min(100, 0.1 * gaa1 + 0.1 * gaa2 + 0.1 * qz1 + 0.4 * f + 0.25 * maxPE + 0.15 * minPE);
-                    },
-                    eligibility: "Weekly GrPA scores >= 40% for weeks 1-4 (OPPE1) and 5-8 (OPPE2), Final exam eligibility, Minimum 40% in one OPPE"
-                },
-                "Statistics for Data Science 2": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "Final Exam", "Extra Activity Bonus (0-5)"],
-                    formula: "T = 0.1*GAA + max(0.6*F + 0.2*max(Qz1, Qz2), 0.4*F + 0.2*Qz1 + 0.3*Qz2) + Bonus",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, f, bonus] = values;
-                        const option1 = 0.6 * f + 0.2 * Math.max(qz1, qz2);
-                        const option2 = 0.4 * f + 0.2 * qz1 + 0.3 * qz2;
-                        return Math.min(105, 0.1 * gaa + Math.max(option1, option2) + bonus);
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                }
-            },
-            diploma: {
-                "Machine Learning Foundations": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "Final Exam"],
-                    formula: "T = 0.1*GAA + max(0.6*F + 0.2*max(Qz1, Qz2), 0.4*F + 0.2*Qz1 + 0.3*Qz2)",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, f] = values;
-                        const option1 = 0.6 * f + 0.2 * Math.max(qz1, qz2);
-                        const option2 = 0.4 * f + 0.2 * qz1 + 0.3 * qz2;
-                        return 0.1 * gaa + Math.max(option1, option2);
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                },
-                "Machine Learning Techniques": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "Final Exam", "Programming Assignment Bonus (0-3)"],
-                    formula: "T = 0.1*GAA + 0.4*F + max(0.25*Qz1 + 0.25*Qz2, 0.4*max(Qz1,Qz2)) + Bonus",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, f, bonus] = values;
-                        const quizOption1 = 0.25 * qz1 + 0.25 * qz2;
-                        const quizOption2 = 0.4 * Math.max(qz1, qz2);
-                        return 0.1 * gaa + 0.4 * f + Math.max(quizOption1, quizOption2) + bonus;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                },
-                "Machine Learning Practice": {
-                    inputs: ["GAA", "OPPE1", "OPPE2", "Kaggle Average", "Final Exam"],
-                    formula: "T = 0.1*GAA + 0.30*F + 0.20*OPPE1 + 0.20*OPPE2 + 0.20*KA",
-                    calculate: (values) => {
-                        const [gaa, oppe1, oppe2, ka, f] = values;
-                        return 0.1 * gaa + 0.30 * f + 0.20 * oppe1 + 0.20 * oppe2 + 0.20 * ka;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND minimum 40% in one OPPE"
-                },
-                "Business Data Management": {
-                    inputs: ["Best 3 GA (out of 4)", "Quiz 2", "ROE", "Final Exam"],
-                    formula: "T = 0.3*GA + 0.20*Q2 + 0.2*ROE + 0.3*F",
-                    calculate: (values) => {
-                        const [ga, q2, roe, f] = values;
-                        return 0.3 * ga + 0.20 * q2 + 0.2 * roe + 0.3 * f;
-                    },
-                    eligibility: "Submit at least one of first two GAs AND average of best 2 of first 3 GAs >= 40%"
-                },
-                "Business Analytics": {
-                    inputs: ["Best 2 Assignments (out of 3)", "Quiz Score", "Final Exam"],
-                    formula: "T = 0.4*A + 0.2*Qz + 0.4*F",
-                    calculate: (values) => {
-                        const [a, qz, f] = values;
-                        return 0.4 * a + 0.2 * qz + 0.4 * f;
-                    },
-                    eligibility: "Submit at least 1 of first 2 assignments AND Quiz score >= 35% AND Final exam >= 25%"
-                },
-                "Tools in Data Science": {
-                    inputs: ["Best 4 GA (out of 7)", "ROE1", "Project 1", "Project 2", "Final Exam"],
-                    formula: "T = 0.15*GAA + 0.2*ROE1 + 0.2*P1 + 0.2*P2 + 0.25*F",
-                    calculate: (values) => {
-                        const [gaa, roe1, p1, p2, f] = values;
-                        return 0.15 * gaa + 0.2 * roe1 + 0.2 * p1 + 0.2 * p2 + 0.25 * f;
-                    },
-                    eligibility: "Average of best 4 out of first 5 weeks >= 40%"
-                },
-                "PDSA": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "OPPE", "Final Exam"],
-                    formula: "T = 0.1*GAA + 0.4*F + 0.2*OP + max(0.2*max(Qz1,Qz2), 0.15*Qz1 + 0.15*Qz2)",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, op, f] = values;
-                        const quizOption1 = 0.2 * Math.max(qz1, qz2);
-                        const quizOption2 = 0.15 * qz1 + 0.15 * qz2;
-                        return 0.1 * gaa + 0.4 * f + 0.2 * op + Math.max(quizOption1, quizOption2);
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz AND GrPA scores >= 40% for weeks 2-8"
-                },
-                "DBMS": {
-                    inputs: ["GAA1", "GAA2 (SQL)", "GAA3 (Programming)", "Quiz 1", "Quiz 2", "OPE", "Final Exam"],
-                    formula: "T = 0.04*GAA1 + 0.03*GAA2 + 0.03*GAA3 + 0.2*OP + max(0.45*F + 0.15*max(Qz1,Qz2), 0.4*F + 0.10*Qz1 + 0.20*Qz2)",
-                    calculate: (values) => {
-                        const [gaa1, gaa2, gaa3, qz1, qz2, op, f] = values;
-                        const option1 = 0.45 * f + 0.15 * Math.max(qz1, qz2);
-                        const option2 = 0.4 * f + 0.10 * qz1 + 0.20 * qz2;
-                        return 0.04 * gaa1 + 0.03 * gaa2 + 0.03 * gaa3 + 0.2 * op + Math.max(option1, option2);
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz AND OPE >= 35% with correct Python-DB question"
-                },
-                "Application Development 1": {
-                    inputs: ["Best 2 Lab Assignments (out of 5)", "GAA", "Quiz 1", "Quiz 2", "Final Exam"],
-                    formula: "T = 0.15*GLA + 0.05*GA + max(0.35*F + 0.2*Qz1 + 0.25*Qz2, 0.4*F + 0.3*best(Qz1,Qz2))",
-                    calculate: (values) => {
-                        const [gla, ga, qz1, qz2, f] = values;
-                        const option1 = 0.35 * f + 0.2 * qz1 + 0.25 * qz2;
-                        const option2 = 0.4 * f + 0.3 * Math.max(qz1, qz2);
-                        return 0.15 * gla + 0.05 * ga + Math.max(option1, option2);
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                },
-                "Java Programming": {
-                    inputs: ["Best 6 GAA (out of 7)", "Quiz 1", "Quiz 2", "OPPE1", "OPPE2", "Final Exam"],
-                    formula: "T = 0.1*GAA + 0.3*F + 0.2*max(PE1,PE2) + 0.10*min(PE1,PE2) + max(0.25*max(Qz1,Qz2), 0.15*Qz1 + 0.25*Qz2)",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, pe1, pe2, f] = values;
-                        const maxPE = Math.max(pe1, pe2);
-                        const minPE = Math.min(pe1, pe2);
-                        const quizOption1 = 0.25 * Math.max(qz1, qz2);
-                        const quizOption2 = 0.15 * qz1 + 0.25 * qz2;
-                        return Math.min(100, 0.1 * gaa + 0.3 * f + 0.2 * maxPE + 0.10 * minPE + Math.max(quizOption1, quizOption2));
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz AND minimum 30% in one OPPE AND GrPA criteria"
-                },
-                "System Commands": {
-                    inputs: ["Best 9 GAA (out of 10)", "Quiz 1", "BPT Average", "OPE", "Final Exam"],
-                    formula: "T = 0.10*GAA + 0.2*Qz1 + 0.3*OPE + 0.3*F + 0.1*BPTA",
-                    calculate: (values) => {
-                        const [gaa, qz1, bpta, ope, f] = values;
-                        return 0.10 * gaa + 0.2 * qz1 + 0.3 * ope + 0.3 * f + 0.1 * bpta;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND OPE >= 40% AND BPT average >= 40%"
-                },
-                "Application Development 2": {
-                    inputs: ["GAA1", "GAA2 (Programming)", "Quiz 1", "Quiz 2", "Final Exam"],
-                    formula: "T = 0.05*GAA1 + 0.05*GAA2 + max(0.35*F + 0.25*Qz1 + 0.3*Qz2, 0.5*F + 0.3*best(Qz1,Qz2))",
-                    calculate: (values) => {
-                        const [gaa1, gaa2, qz1, qz2, f] = values;
-                        const option1 = 0.35 * f + 0.25 * qz1 + 0.3 * qz2;
-                        const option2 = 0.5 * f + 0.3 * Math.max(qz1, qz2);
-                        return 0.05 * gaa1 + 0.05 * gaa2 + Math.max(option1, option2);
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                }
-            },
-            degree: {
-                "Software Testing": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "Final Exam"],
-                    formula: "T = 0.1*GAA + 0.4*F + 0.25*Qz1 + 0.25*Qz2",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, f] = values;
-                        return 0.1 * gaa + 0.4 * f + 0.25 * qz1 + 0.25 * qz2;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                },
-                "Software Engineering": {
-                    inputs: ["GAA", "Quiz 2", "Group Project 1", "Group Project 2", "Project Presentation", "Course Participation", "Final Exam"],
-                    formula: "T = 0.05*GAA + 0.2*Qz2 + 0.4*F + 0.1*GP1 + 0.1*GP2 + 0.1*PP + 0.05*CP",
-                    calculate: (values) => {
-                        const [gaa, qz2, gp1, gp2, pp, cp, f] = values;
-                        return 0.05 * gaa + 0.2 * qz2 + 0.4 * f + 0.1 * gp1 + 0.1 * gp2 + 0.1 * pp + 0.05 * cp;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND submission of Group project Milestone 1-3"
-                },
-                "Deep Learning": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "Final Exam", "Programming Bonus (0-5)"],
-                    formula: "T = 0.1*GAA + 0.4*F + 0.25*Qz1 + 0.25*Qz2 + Bonus",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, f, bonus] = values;
-                        return 0.1 * gaa + 0.4 * f + 0.25 * qz1 + 0.25 * qz2 + bonus;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                },
-                "AI: Search Methods for Problem Solving": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "Final Exam", "Programming Bonus (0-5)"],
-                    formula: "T = 0.1*GAA + 0.4*F + 0.25*Qz1 + 0.25*Qz2 + Bonus",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, f, bonus] = values;
-                        return 0.1 * gaa + 0.4 * f + 0.25 * qz1 + 0.25 * qz2 + bonus;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                },
-                "Strategies for Professional Growth": {
-                    inputs: ["GAA", "Quiz 2", "Group Project", "Final Exam"],
-                    formula: "T = 0.15*GAA + 0.25*GP + 0.25*Qz2 + 0.35*F",
-                    calculate: (values) => {
-                        const [gaa, qz2, gp, f] = values;
-                        return 0.15 * gaa + 0.25 * gp + 0.25 * qz2 + 0.35 * f;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40%"
-                },
-                "Introduction to Big Data": {
-                    inputs: ["Best 6 GAA (out of 9)", "OPPE1", "OPPE2", "Final Exam"],
-                    formula: "T = 0.1*GAA + 0.3*F + 0.2*OPPE1 + 0.4*OPPE2",
-                    calculate: (values) => {
-                        const [gaa, oppe1, oppe2, f] = values;
-                        return 0.1 * gaa + 0.3 * f + 0.2 * oppe1 + 0.4 * oppe2;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND minimum 40% in one OPPE"
-                },
-                "Programming in C": {
-                    inputs: ["GAA (Objective)", "GAAP (Programming)", "Quiz 1", "OPPE1", "OPPE2", "Final Exam"],
-                    formula: "T = 0.05*GAA + 0.1*GAAP + 0.15*Qz1 + 0.20*OPPE1 + 0.20*OPPE2 + 0.30*F",
-                    calculate: (values) => {
-                        const [gaa, gaap, qz1, oppe1, oppe2, f] = values;
-                        return 0.05 * gaa + 0.1 * gaap + 0.15 * qz1 + 0.20 * oppe1 + 0.20 * oppe2 + 0.30 * f;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND minimum 40% in one OPPE"
-                },
-                "Deep Learning for CV": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "Final Exam"],
-                    formula: "T = 0.1*GAA + 0.4*F + 0.25*Qz1 + 0.25*Qz2",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, f] = values;
-                        return 0.1 * gaa + 0.4 * f + 0.25 * qz1 + 0.25 * qz2;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                },
-                "Managerial Economics": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "Final Exam"],
-                    formula: "T = 0.1*GAA + 0.4*F + 0.25*Qz1 + 0.25*Qz2",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, f] = values;
-                        return 0.1 * gaa + 0.4 * f + 0.25 * qz1 + 0.25 * qz2;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                },
-                "Algorithmic Thinking in Bioinformatics": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "Final Exam"],
-                    formula: "T = 0.2*GAA + 0.2*Qz1 + 0.2*Qz2 + 0.4*F",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, f] = values;
-                        return 0.2 * gaa + 0.2 * qz1 + 0.2 * qz2 + 0.4 * f;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                },
-                "Large Language Models": {
-                    inputs: ["GAA (7 assignments)", "Quiz 1", "Quiz 2", "Final Exam", "Programming Bonus (0-10)"],
-                    formula: "T = 0.1*GAA + 0.4*F + 0.25*Qz1 + 0.25*Qz2 + Bonus",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, f, bonus] = values;
-                        return 0.1 * gaa + 0.4 * f + 0.25 * qz1 + 0.25 * qz2 + bonus;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                },
-                "Speech Technology": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "Viva", "Final Exam"],
-                    formula: "T = 0.15*GAA + 0.15*V + 0.3*F + 0.20*Qz1 + 0.20*Qz2",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, v, f] = values;
-                        return 0.15 * gaa + 0.15 * v + 0.3 * f + 0.20 * qz1 + 0.20 * qz2;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                },
-                "Design Thinking for Data-Driven App Development": {
-                    inputs: ["GAA", "Quiz 2", "Group Project 1", "Group Project 2", "Group Project 3", "Final Exam"],
-                    formula: "T = 0.1*GAA + 0.1*GP1 + 0.1*GP2 + 0.2*GP3 + 0.2*Qz2 + 0.3*F",
-                    calculate: (values) => {
-                        const [gaa, qz2, gp1, gp2, gp3, f] = values;
-                        return 0.1 * gaa + 0.1 * gp1 + 0.1 * gp2 + 0.2 * gp3 + 0.2 * qz2 + 0.3 * f;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND final project score > 60%"
-                },
-                "Market Research": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "Project", "Final Exam"],
-                    formula: "T = 0.1*GAA + 0.2*Qz1 + 0.2*Qz2 + 0.25*P + 0.25*F",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, p, f] = values;
-                        return 0.1 * gaa + 0.2 * qz1 + 0.2 * qz2 + 0.25 * p + 0.25 * f;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                },
-                "Statistical Computing": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "Final Exam"],
-                    formula: "T = 0.1*GAA + 0.4*F + 0.25*Qz1 + 0.25*Qz2",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, f] = values;
-                        return 0.1 * gaa + 0.4 * f + 0.25 * qz1 + 0.25 * qz2;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                },
-                "Advanced Algorithms": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "Final Exam"],
-                    formula: "T = 0.15*GAA + 0.35*F + 0.25*Qz1 + 0.25*Qz2",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, f] = values;
-                        return 0.15 * gaa + 0.35 * f + 0.25 * qz1 + 0.25 * qz2;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                },
-                "Game Theory and Strategy": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "Final Exam"],
-                    formula: "T = 0.1*GAA + 0.4*F + 0.25*Qz1 + 0.25*Qz2",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, f] = values;
-                        return 0.1 * gaa + 0.4 * f + 0.25 * qz1 + 0.25 * qz2;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                },
-                "Computer System Design": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "Circuit Verse Assignment", "Final Exam"],
-                    formula: "T = 0.1*GAA + 0.4*F + 0.2*Qz1 + 0.25*Qz2 + 0.05*CV",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, cv, f] = values;
-                        return 0.1 * gaa + 0.4 * f + 0.2 * qz1 + 0.25 * qz2 + 0.05 * cv;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40% AND attendance in one quiz"
-                },
-                "Mathematical Foundations of Generative AI": {
-                    inputs: ["GAA", "Quiz 1", "Quiz 2", "OPPE", "Final Exam"],
-                    formula: "T = 0.2*GAA + 0.35*F + 0.10*Qz1 + 0.15*Qz2 + 0.2*OPPE",
-                    calculate: (values) => {
-                        const [gaa, qz1, qz2, oppe, f] = values;
-                        return 0.2 * gaa + 0.35 * f + 0.10 * qz1 + 0.15 * qz2 + 0.2 * oppe;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40%"
-                },
-                "Algorithms for Data Science": {
-                    inputs: ["GAA (5 assignments)", "Quiz 2", "Final Exam"],
-                    formula: "T = 0.2*GAA + 0.45*F + 0.35*Qz2",
-                    calculate: (values) => {
-                        const [gaa, qz2, f] = values;
-                        return 0.2 * gaa + 0.45 * f + 0.35 * qz2;
-                    },
-                    eligibility: "Average of best 2 out of first 3 assignments >= 40%"
-                },
-                "MLOPS": {
-                    inputs: ["GAA", "OPPE1", "OPPE2", "Final Exam", "Live Session Bonus (0-5)"],
-                    formula: "T = 0.1*GAA + 0.3*F + 0.3*OPPE1 + 0.3*OPPE2 + Bonus",
-                    calculate: (values) => {
-                        const [gaa, oppe1, oppe2, f, bonus] = values;
-                        return 0.1 * gaa + 0.3 * f + 0.3 * oppe1 + 0.3 * oppe2 + bonus;
-                    },
-                    eligibility: "Average of best 5 out of first 7 weeks >= 40%"
-                }
-            }
-        };
+  // --- grade mapping (kept same) ---
+  function getGradeFromScore(score) {
+    if (score >= 90) return 'S';
+    if (score >= 80) return 'A';
+    if (score >= 70) return 'B';
+    if (score >= 60) return 'C';
+    if (score >= 50) return 'D';
+    if (score >= 40) return 'E';
+    return 'U';
+  }
 
-        let currentLevel = 'foundation';
-        let currentCourse = null;
+  // --- Input helpers with hints ---
+  function makeInputGroup({label, id, min=0, max=100, step=0.01, placeholder="Enter score (0-100)", hint=""}) {
+    const wrap = document.createElement('div');
+    wrap.className = 'input-group';
+    const lab = document.createElement('label');
+    lab.htmlFor = id; lab.textContent = label;
+    const inp = document.createElement('input');
+    inp.type = 'number'; inp.id = id; inp.min = String(min); inp.max = String(max);
+    inp.step = String(step); inp.placeholder = placeholder; inp.title = hint || label;
+    const hintEl = document.createElement('div');
+    hintEl.className = 'hint'; hintEl.textContent = hint;
+    wrap.appendChild(lab); wrap.appendChild(inp);
+    if (hint) wrap.appendChild(hintEl);
+    return wrap;
+  }
 
-        function getGradeFromScore(score) {
-            if (score >= 90) return 'S';
-            if (score >= 80) return 'A';
-            if (score >= 70) return 'B';
-            if (score >= 60) return 'C';
-            if (score >= 50) return 'D';
-            if (score >= 40) return 'E';
-            return 'U';
-        }
+  // --- Course catalog with two fixes (BA + Java) & concise hints ---
+  const courses = {
+    foundation: {
+      "Mathematics for Data Science 1": {
+        inputs: [
+          {label:"GAA", hint:"Avg. of first 10 graded assignments"},
+          {label:"Quiz 1"},
+          {label:"Quiz 2"},
+          {label:"Final Exam"}
+        ],
+        formula: "T = 0.1·GAA + max(0.6·F + 0.2·max(Q1,Q2), 0.4·F + 0.2·Q1 + 0.3·Q2)",
+        pills: ["Max-of-two-branches"],
+        calculate: ([gaa,q1,q2,f]) => 0.1*gaa + Math.max(0.6*f + 0.2*Math.max(q1,q2), 0.4*f + 0.2*q1 + 0.3*q2),
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + attendance in ≥1 quiz"
+      },
+      "English 1": {
+        inputs: [
+          {label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"Final Exam"}
+        ],
+        formula: "T = 0.1·GAA + max(0.6·F + 0.2·max(Q1,Q2), 0.4·F + 0.2·Q1 + 0.3·Q2)",
+        pills: ["Max-of-two-branches"],
+        calculate: ([gaa,q1,q2,f]) => 0.1*gaa + Math.max(0.6*f + 0.2*Math.max(q1,q2), 0.4*f + 0.2*q1 + 0.3*q2),
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + attendance in ≥1 quiz"
+      },
+      "Computational Thinking": {
+        inputs: [
+          {label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"Final Exam"}
+        ],
+        formula: "T = 0.1·GAA + max(0.6·F + 0.2·max(Q1,Q2), 0.4·F + 0.2·Q1 + 0.3·Q2)",
+        pills: ["Max-of-two-branches"],
+        calculate: ([gaa,q1,q2,f]) => 0.1*gaa + Math.max(0.6*f + 0.2*Math.max(q1,q2), 0.4*f + 0.2*q1 + 0.3*q2),
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + attendance in ≥1 quiz"
+      },
+      "Statistics for Data Science 1": {
+        inputs: [
+          {label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},
+          {label:"Final Exam"},
+          {label:"Extra Activity Bonus", hint:"0–5 allowed", min:0, max:5}
+        ],
+        formula: "T = 0.1·GAA + max(0.6·F + 0.2·max(Q1,Q2), 0.4·F + 0.2·Q1 + 0.3·Q2) + Bonus",
+        pills: ["Bonus up to +5","Cap 105"],
+        calculate: ([gaa,q1,q2,f,bonus]) => Math.min(105, 0.1*gaa + Math.max(0.6*f + 0.2*Math.max(q1,q2), 0.4*f + 0.2*q1 + 0.3*q2) + (bonus||0)),
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + attendance in ≥1 quiz"
+      },
+      "Mathematics for Data Science 2": {
+        inputs: [{label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"Final Exam"}],
+        formula: "T = 0.1·GAA + max(0.6·F + 0.2·max(Q1,Q2), 0.4·F + 0.2·Q1 + 0.3·Q2)",
+        pills: ["Max-of-two-branches"],
+        calculate: ([gaa,q1,q2,f]) => 0.1*gaa + Math.max(0.6*f + 0.2*Math.max(q1,q2), 0.4*f + 0.2*q1 + 0.3*q2),
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + attendance in ≥1 quiz"
+      },
+      "English 2": {
+        inputs: [{label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"Final Exam"}],
+        formula: "T = 0.1·GAA + max(0.6·F + 0.2·max(Q1,Q2), 0.4·F + 0.2·Q1 + 0.3·Q2)",
+        pills: ["Max-of-two-branches"],
+        calculate: ([gaa,q1,q2,f]) => 0.1*gaa + Math.max(0.6*f + 0.2*Math.max(q1,q2), 0.4*f + 0.2*q1 + 0.3*q2),
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + attendance in ≥1 quiz"
+      },
+      "Intro to Python Programming": {
+        inputs: [
+          {label:"GAA1 (Objective)"}, {label:"GAA2 (Programming)"},
+          {label:"Quiz 1"}, {label:"OPPE1"}, {label:"OPPE2"}, {label:"Final Exam"}
+        ],
+        formula: "T = 0.1·GAA1 + 0.1·GAA2 + 0.1·Q1 + 0.4·F + 0.25·max(PE1,PE2) + 0.15·min(PE1,PE2)",
+        pills: ["Cap 100"],
+        calculate: ([g1,g2,q1,pe1,pe2,f]) => Math.min(100, 0.1*g1 + 0.1*g2 + 0.1*q1 + 0.4*f + 0.25*Math.max(pe1,pe2) + 0.15*Math.min(pe1,pe2)),
+        eligibility: "GrPA 1–4 & 5–8 ≥ 40% (OPPE eligibility) + final eligibility; ≥40% in one OPPE"
+      },
+      "Statistics for Data Science 2": {
+        inputs: [
+          {label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},
+          {label:"Final Exam"},{label:"Extra Activity Bonus", hint:"0–5 allowed", min:0, max:5}
+        ],
+        formula: "T = 0.1·GAA + max(0.6·F + 0.2·max(Q1,Q2), 0.4·F + 0.2·Q1 + 0.3·Q2) + Bonus",
+        pills: ["Bonus up to +5","Cap 105"],
+        calculate: ([gaa,q1,q2,f,bonus]) => Math.min(105, 0.1*gaa + Math.max(0.6*f + 0.2*Math.max(q1,q2), 0.4*f + 0.2*q1 + 0.3*q2) + (bonus||0)),
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + attendance in ≥1 quiz"
+      }
+    },
+    diploma: {
+      "Machine Learning Foundations": {
+        inputs: [{label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"Final Exam"}],
+        formula: "T = 0.1·GAA + max(0.6·F + 0.2·max(Q1,Q2), 0.4·F + 0.2·Q1 + 0.3·Q2)",
+        pills: ["Max-of-two-branches"],
+        calculate: ([gaa,q1,q2,f]) => 0.1*gaa + Math.max(0.6*f + 0.2*Math.max(q1,q2), 0.4*f + 0.2*q1 + 0.3*q2),
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + attendance in ≥1 quiz"
+      },
+      "Machine Learning Techniques": {
+        inputs: [{label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"Final Exam"},{label:"Programming Bonus", hint:"0–3 allowed", min:0, max:3}],
+        formula: "T = 0.1·GAA + 0.4·F + max(0.25·Q1 + 0.25·Q2, 0.4·max(Q1,Q2)) + Bonus",
+        pills: ["Bonus up to +3"],
+        calculate: ([gaa,q1,q2,f,bonus]) => 0.1*gaa + 0.4*f + Math.max(0.25*q1+0.25*q2, 0.4*Math.max(q1,q2)) + (bonus||0),
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + attendance in ≥1 quiz"
+      },
+      "Machine Learning Practice": {
+        inputs: [{label:"GAA"},{label:"OPPE1"},{label:"OPPE2"},{label:"Kaggle Average"},{label:"Final Exam"}],
+        formula: "T = 0.1·GAA + 0.30·F + 0.20·OPPE1 + 0.20·OPPE2 + 0.20·KA",
+        calculate: ([gaa,op1,op2,ka,f]) => 0.1*gaa + 0.30*f + 0.20*op1 + 0.20*op2 + 0.20*ka,
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + ≥40% in ≥1 OPPE"
+      },
+      "Business Data Management": {
+        inputs: [{label:"Best 3 GA (out of 4)"},{label:"Quiz 2"},{label:"ROE"},{label:"Final Exam"}],
+        formula: "T = 0.3·GA + 0.20·Q2 + 0.2·ROE + 0.3·F",
+        calculate: ([ga,q2,roe,f]) => 0.3*ga + 0.20*q2 + 0.2*roe + 0.3*f,
+        eligibility: "Submit ≥1 of first two GAs & avg best 2 of first 3 ≥ 40%"
+      },
+      // ---- FIXED: Business Analytics (sum with ET cap 40) ----
+      "Business Analytics": {
+        inputs: [
+          {label:"Best 2 Assignments (sum)", hint:"Out of 40"},
+          {label:"Quiz 1", hint:"Out of 20"},
+          {label:"Quiz 2", hint:"Out of 20"},
+          {label:"Final Exam (raw)", hint:"Out of 45; capped to 40"}
+        ],
+        formula: "T = A(40) + Qz(20) + F(≤40) where Qz = 0.7·max(Q1,Q2) + 0.3·min(Q1,Q2)",
+        pills: ["Final cap 40"],
+        calculate: ([a40,q1,q2,fRaw]) => {
+          const qz = 0.7*Math.max(q1,q2) + 0.3*Math.min(q1,q2);
+          const f = Math.min(40, fRaw);
+          return a40 + qz + f; // out of 100
+        },
+        eligibility: "≥1 of first 2 assignments; Quiz ≥35%; End-term ≥25%"
+      },
+      "Tools in Data Science": {
+        inputs: [{label:"Best 4 GA (out of 7)"},{label:"ROE1"},{label:"Project 1"},{label:"Project 2"},{label:"Final Exam"}],
+        formula: "T = 0.15·GAA + 0.2·ROE1 + 0.2·P1 + 0.2·P2 + 0.25·F",
+        calculate: ([gaa,roe1,p1,p2,f]) => 0.15*gaa + 0.2*roe1 + 0.2*p1 + 0.2*p2 + 0.25*f,
+        eligibility: "Avg. best 4 of first 5 ≥ 40%"
+      },
+      "PDSA": {
+        inputs: [{label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"OPPE"},{label:"Final Exam"}],
+        formula: "T = 0.1·GAA + 0.4·F + 0.2·OP + max(0.2·max(Q1,Q2), 0.15·Q1 + 0.15·Q2)",
+        calculate: ([gaa,q1,q2,op,f]) => 0.1*gaa + 0.4*f + 0.2*op + Math.max(0.2*Math.max(q1,q2), 0.15*q1 + 0.15*q2),
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + quiz attendance + GrPA(2–8) ≥ 40%"
+      },
+      "DBMS": {
+        inputs: [{label:"GAA1"},{label:"GAA2 (SQL)"},{label:"GAA3 (Prog)"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"OPE"},{label:"Final Exam"}],
+        formula: "T = 0.04·GAA1 + 0.03·GAA2 + 0.03·GAA3 + 0.2·OP + max(0.45·F + 0.15·max(Q1,Q2), 0.4·F + 0.10·Q1 + 0.20·Q2)",
+        calculate: ([g1,g2,g3,q1,q2,op,f]) => 0.04*g1 + 0.03*g2 + 0.03*g3 + 0.2*op + Math.max(0.45*f + 0.15*Math.max(q1,q2), 0.4*f + 0.10*q1 + 0.20*q2),
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + quiz attendance + OPE ≥ 35% with Python-DB Q"
+      },
+      "Application Development 1": {
+        inputs: [{label:"Best 2 Lab Assignments (sum)"},{label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"Final Exam"}],
+        formula: "T = 0.15·GLA + 0.05·GA + max(0.35·F + 0.2·Q1 + 0.25·Q2, 0.4·F + 0.3·best(Q))",
+        calculate: ([gla,ga,q1,q2,f]) => 0.15*gla + 0.05*ga + Math.max(0.35*f + 0.2*q1 + 0.25*q2, 0.4*f + 0.3*Math.max(q1,q2)),
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + quiz attendance"
+      },
+      // ---- FIXED: Java Programming (Diploma) ----
+      "Java Programming": {
+        inputs: [
+          {label:"GAA (Objective)"}, {label:"GAAP (Programming)"},
+          {label:"Quiz 1"}, {label:"OPPE1"}, {label:"OPPE2"}, {label:"Final Exam"}
+        ],
+        formula: "T = 0.05·GAA + 0.10·GAAP + 0.15·Q1 + 0.20·OPPE1 + 0.20·OPPE2 + 0.30·F",
+        calculate: ([gaa,gaap,q1,op1,op2,f]) => 0.05*gaa + 0.10*gaap + 0.15*q1 + 0.20*op1 + 0.20*op2 + 0.30*f,
+        eligibility: "GrPA-based OPPE eligibility + final eligibility"
+      },
+      "System Commands": {
+        inputs: [{label:"Best 9 GAA (out of 10)"},{label:"Quiz 1"},{label:"BPT Average"},{label:"OPE"},{label:"Final Exam"}],
+        formula: "T = 0.10·GAA + 0.2·Q1 + 0.3·OPE + 0.3·F + 0.1·BPTA",
+        calculate: ([gaa,q1,bpta,ope,f]) => 0.10*gaa + 0.2*q1 + 0.3*ope + 0.3*f + 0.1*bpta,
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + OPE ≥ 40% + BPT avg ≥ 40%"
+      },
+      "Application Development 2": {
+        inputs: [{label:"GAA1"},{label:"GAA2 (Prog)"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"Final Exam"}],
+        formula: "T = 0.05·GAA1 + 0.05·GAA2 + max(0.35·F + 0.25·Q1 + 0.3·Q2, 0.5·F + 0.3·best(Q))",
+        calculate: ([g1,g2,q1,q2,f]) => 0.05*g1 + 0.05*g2 + Math.max(0.35*f + 0.25*q1 + 0.3*q2, 0.5*f + 0.3*Math.max(q1,q2)),
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + quiz attendance"
+      }
+    },
+    degree: {
+      "Software Testing": {
+        inputs: [{label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"Final Exam"}],
+        formula: "T = 0.1·GAA + 0.4·F + 0.25·Q1 + 0.25·Q2",
+        calculate: ([gaa,q1,q2,f]) => 0.1*gaa + 0.4*f + 0.25*q1 + 0.25*q2,
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + quiz attendance"
+      },
+      "Software Engineering": {
+        inputs: [{label:"GAA"},{label:"Quiz 2"},{label:"Group Project 1"},{label:"Group Project 2"},{label:"Project Presentation"},{label:"Course Participation"},{label:"Final Exam"}],
+        formula: "T = 0.05·GAA + 0.2·Q2 + 0.4·F + 0.1·GP1 + 0.1·GP2 + 0.1·PP + 0.05·CP",
+        calculate: ([gaa,q2,gp1,gp2,pp,cp,f]) => 0.05*gaa + 0.2*q2 + 0.4*f + 0.1*gp1 + 0.1*gp2 + 0.1*pp + 0.05*cp,
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + GP Milestones"
+      },
+      "Deep Learning": {
+        inputs: [{label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"Final Exam"},{label:"Programming Bonus", hint:"0–5", min:0, max:5}],
+        formula: "T = 0.1·GAA + 0.4·F + 0.25·Q1 + 0.25·Q2 + Bonus",
+        pills: ["Bonus up to +5"],
+        calculate: ([gaa,q1,q2,f,bonus]) => 0.1*gaa + 0.4*f + 0.25*q1 + 0.25*q2 + (bonus||0),
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + quiz attendance"
+      },
+      "AI: Search Methods for Problem Solving": {
+        inputs: [{label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"Final Exam"},{label:"Programming Bonus", hint:"0–5", min:0, max:5}],
+        formula: "T = 0.1·GAA + 0.4·F + 0.25·Q1 + 0.25·Q2 + Bonus",
+        pills: ["Bonus up to +5"],
+        calculate: ([gaa,q1,q2,f,bonus]) => 0.1*gaa + 0.4*f + 0.25*q1 + 0.25*q2 + (bonus||0),
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + quiz attendance"
+      },
+      "Strategies for Professional Growth": {
+        inputs: [{label:"GAA"},{label:"Quiz 2"},{label:"Group Project"},{label:"Final Exam"}],
+        formula: "T = 0.15·GAA + 0.25·GP + 0.25·Q2 + 0.35·F",
+        calculate: ([gaa,q2,gp,f]) => 0.15*gaa + 0.25*gp + 0.25*q2 + 0.35*f,
+        eligibility: "Avg. best 5 of first 7 ≥ 40%"
+      },
+      "Introduction to Big Data": {
+        inputs: [{label:"Best 6 GAA (out of 9)"},{label:"OPPE1"},{label:"OPPE2"},{label:"Final Exam"}],
+        formula: "T = 0.1·GAA + 0.3·F + 0.2·OPPE1 + 0.4·OPPE2",
+        calculate: ([gaa,op1,op2,f]) => 0.1*gaa + 0.3*f + 0.2*op1 + 0.4*op2,
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + ≥40% in ≥1 OPPE"
+      },
+      "Programming in C": {
+        inputs: [{label:"GAA (Objective)"},{label:"GAAP (Programming)"},{label:"Quiz 1"},{label:"OPPE1"},{label:"OPPE2"},{label:"Final Exam"}],
+        formula: "T = 0.05·GAA + 0.10·GAAP + 0.15·Q1 + 0.20·OPPE1 + 0.20·OPPE2 + 0.30·F",
+        calculate: ([gaa,gaap,q1,op1,op2,f]) => 0.05*gaa + 0.10*gaap + 0.15*q1 + 0.20*op1 + 0.20*op2 + 0.30*f,
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + ≥40% in ≥1 OPPE"
+      },
+      "Deep Learning for CV": {
+        inputs: [{label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"Final Exam"}],
+        formula: "T = 0.1·GAA + 0.4·F + 0.25·Q1 + 0.25·Q2",
+        calculate: ([gaa,q1,q2,f]) => 0.1*gaa + 0.4*f + 0.25*q1 + 0.25*q2,
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + quiz attendance"
+      },
+      "Managerial Economics": {
+        inputs: [{label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"Final Exam"}],
+        formula: "T = 0.1·GAA + 0.4·F + 0.25·Q1 + 0.25·Q2",
+        calculate: ([gaa,q1,q2,f]) => 0.1*gaa + 0.4*f + 0.25*q1 + 0.25*q2,
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + quiz attendance"
+      },
+      "Algorithmic Thinking in Bioinformatics": {
+        inputs: [{label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"Final Exam"}],
+        formula: "T = 0.2·GAA + 0.2·Q1 + 0.2·Q2 + 0.4·F",
+        calculate: ([gaa,q1,q2,f]) => 0.2*gaa + 0.2*q1 + 0.2*q2 + 0.4*f,
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + quiz attendance"
+      },
+      "Large Language Models": {
+        inputs: [{label:"GAA (7 assignments)"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"Final Exam"},{label:"Programming Bonus", hint:"0–10", min:0, max:10}],
+        formula: "T = 0.1·GAA + 0.4·F + 0.25·Q1 + 0.25·Q2 + Bonus",
+        pills: ["Bonus up to +10"],
+        calculate: ([gaa,q1,q2,f,bonus]) => 0.1*gaa + 0.4*f + 0.25*q1 + 0.25*q2 + (bonus||0),
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + quiz attendance"
+      },
+      "Speech Technology": {
+        inputs: [{label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"Viva"},{label:"Final Exam"}],
+        formula: "T = 0.15·GAA + 0.15·V + 0.3·F + 0.20·Q1 + 0.20·Q2",
+        calculate: ([gaa,q1,q2,v,f]) => 0.15*gaa + 0.15*v + 0.3*f + 0.20*q1 + 0.20*q2,
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + quiz attendance"
+      },
+      "Design Thinking for Data-Driven App Development": {
+        inputs: [{label:"GAA"},{label:"Quiz 2"},{label:"Group Project 1"},{label:"Group Project 2"},{label:"Group Project 3"},{label:"Final Exam"}],
+        formula: "T = 0.1·GAA + 0.1·GP1 + 0.1·GP2 + 0.2·GP3 + 0.2·Q2 + 0.3·F",
+        calculate: ([gaa,q2,gp1,gp2,gp3,f]) => 0.1*gaa + 0.1*gp1 + 0.1*gp2 + 0.2*gp3 + 0.2*q2 + 0.3*f,
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + final project > 60%"
+      },
+      "Market Research": {
+        inputs: [{label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"Project"},{label:"Final Exam"}],
+        formula: "T = 0.1·GAA + 0.2·Q1 + 0.2·Q2 + 0.25·P + 0.25·F",
+        calculate: ([gaa,q1,q2,p,f]) => 0.1*gaa + 0.2*q1 + 0.2*q2 + 0.25*p + 0.25*f,
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + quiz attendance"
+      },
+      "Statistical Computing": {
+        inputs: [{label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"Final Exam"}],
+        formula: "T = 0.1·GAA + 0.4·F + 0.25·Q1 + 0.25·Q2",
+        calculate: ([gaa,q1,q2,f]) => 0.1*gaa + 0.4*f + 0.25*q1 + 0.25*q2,
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + quiz attendance"
+      },
+      "Advanced Algorithms": {
+        inputs: [{label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"Final Exam"}],
+        formula: "T = 0.15·GAA + 0.35·F + 0.25·Q1 + 0.25·Q2",
+        calculate: ([gaa,q1,q2,f]) => 0.15*gaa + 0.35*f + 0.25*q1 + 0.25*q2,
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + quiz attendance"
+      },
+      "Game Theory and Strategy": {
+        inputs: [{label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"Final Exam"}],
+        formula: "T = 0.1·GAA + 0.4·F + 0.25·Q1 + 0.25·Q2",
+        calculate: ([gaa,q1,q2,f]) => 0.1*gaa + 0.4*f + 0.25*q1 + 0.25*q2,
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + quiz attendance"
+      },
+      "Computer System Design": {
+        inputs: [{label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"Circuit Verse Assignment"},{label:"Final Exam"}],
+        formula: "T = 0.1·GAA + 0.4·F + 0.2·Q1 + 0.25·Q2 + 0.05·CV",
+        calculate: ([gaa,q1,q2,cv,f]) => 0.1*gaa + 0.4*f + 0.2*q1 + 0.25*q2 + 0.05*cv,
+        eligibility: "Avg. best 5 of first 7 ≥ 40% + quiz attendance"
+      },
+      "Mathematical Foundations of Generative AI": {
+        inputs: [{label:"GAA"},{label:"Quiz 1"},{label:"Quiz 2"},{label:"OPPE"},{label:"Final Exam"}],
+        formula: "T = 0.2·GAA + 0.35·F + 0.10·Q1 + 0.15·Q2 + 0.2·OPPE",
+        calculate: ([gaa,q1,q2,oppe,f]) => 0.2*gaa + 0.35*f + 0.10*q1 + 0.15*q2 + 0.2*oppe,
+        eligibility: "Avg. best 5 of first 7 ≥ 40%"
+      },
+      "Algorithms for Data Science": {
+        inputs: [{label:"GAA (5 assignments)"},{label:"Quiz 2"},{label:"Final Exam"}],
+        formula: "T = 0.2·GAA + 0.45·F + 0.35·Q2",
+        calculate: ([gaa,q2,f]) => 0.2*gaa + 0.45*f + 0.35*q2,
+        eligibility: "Avg. best 2 of first 3 assignments ≥ 40%"
+      },
+      "MLOPS": {
+        inputs: [{label:"GAA"},{label:"OPPE1"},{label:"OPPE2"},{label:"Final Exam"},{label:"Live Session Bonus", hint:"0–5", min:0, max:5}],
+        formula: "T = 0.1·GAA + 0.3·F + 0.3·OPPE1 + 0.3·OPPE2 + Bonus",
+        pills: ["Bonus up to +5"],
+        calculate: ([gaa,op1,op2,f,bonus]) => 0.1*gaa + 0.3*f + 0.3*op1 + 0.3*op2 + (bonus||0),
+        eligibility: "Avg. best 5 of first 7 ≥ 40%"
+      }
+    }
+  };
 
-        function initializeLevelButtons() {
-            const levelButtons = document.querySelectorAll('.level-btn');
-            levelButtons.forEach(btn => {
-                btn.addEventListener('click', () => {
-                    levelButtons.forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    currentLevel = btn.dataset.level;
-                    updateCourseOptions();
-                    document.getElementById('inputSection').classList.remove('active');
-                    document.getElementById('resultSection').classList.remove('active');
-                });
-            });
-        }
+  let currentLevel = 'foundation';
+  let currentCourse = null;
 
-        function updateCourseOptions() {
-            const courseSelect = document.getElementById('courseSelect');
-            courseSelect.innerHTML = '<option value="">Select a course...</option>';
-            
-            const levelCourses = courses[currentLevel];
-            Object.keys(levelCourses).forEach(courseName => {
-                const option = document.createElement('option');
-                option.value = courseName;
-                option.textContent = courseName;
-                courseSelect.appendChild(option);
-            });
+  function initializeLevelButtons() {
+    const levelButtons = document.querySelectorAll('.level-btn');
+    levelButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        levelButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentLevel = btn.dataset.level;
+        updateCourseOptions();
+        document.getElementById('inputSection').classList.remove('active');
+        document.getElementById('resultSection').classList.remove('active');
+      });
+    });
+  }
 
-            courseSelect.addEventListener('change', (e) => {
-                if (e.target.value) {
-                    currentCourse = levelCourses[e.target.value];
-                    setupInputs();
-                } else {
-                    document.getElementById('inputSection').classList.remove('active');
-                    document.getElementById('resultSection').classList.remove('active');
-                }
-            });
-        }
+  function updateCourseOptions() {
+    const courseSelect = document.getElementById('courseSelect');
+    courseSelect.innerHTML = '<option value="">Select a course...</option>';
+    const levelCourses = courses[currentLevel];
+    Object.keys(levelCourses).forEach(courseName => {
+      const option = document.createElement('option');
+      option.value = courseName;
+      option.textContent = courseName;
+      courseSelect.appendChild(option);
+    });
+    courseSelect.onchange = (e) => {
+      if (e.target.value) {
+        currentCourse = levelCourses[e.target.value];
+        setupInputs();
+      } else {
+        document.getElementById('inputSection').classList.remove('active');
+        document.getElementById('resultSection').classList.remove('active');
+      }
+    };
+  }
 
-        function setupInputs() {
-            const inputGrid = document.getElementById('inputGrid');
-            inputGrid.innerHTML = '';
+  function setupInputs() {
+    const inputGrid = document.getElementById('inputGrid');
+    inputGrid.innerHTML = '';
+    currentCourse.inputs.forEach((cfg, idx) => {
+      const id = `input-${idx}`;
+      const group = makeInputGroup({
+        label: cfg.label,
+        id,
+        min: cfg.min ?? 0, max: cfg.max ?? 100, step: cfg.step ?? 0.01,
+        placeholder: cfg.placeholder ?? 'Enter score (0-100)',
+        hint: cfg.hint ?? ''
+      });
+      inputGrid.appendChild(group);
+    });
 
-            currentCourse.inputs.forEach((inputName, index) => {
-                const inputGroup = document.createElement('div');
-                inputGroup.className = 'input-group';
-                
-                const label = document.createElement('label');
-                label.textContent = inputName;
-                label.setAttribute('for', `input-${index}`);
-                
-                const input = document.createElement('input');
-                input.type = 'number';
-                input.id = `input-${index}`;
-                input.min = '0';
-                input.max = '100';
-                input.step = '0.01';
-                input.placeholder = 'Enter score (0-100)';
-                
-                inputGroup.appendChild(label);
-                inputGroup.appendChild(input);
-                inputGrid.appendChild(inputGroup);
-            });
+    document.getElementById('inputSection').classList.add('active');
+    updateFormulaDisplay();
+  }
 
-            document.getElementById('inputSection').classList.add('active');
-            updateFormulaDisplay();
-        }
+  function updateFormulaDisplay() {
+    document.getElementById('formulaDisplay').textContent = currentCourse.formula;
 
-        function updateFormulaDisplay() {
-            document.getElementById('formulaDisplay').textContent = currentCourse.formula;
-            
-            const infoList = document.getElementById('infoList');
-            infoList.innerHTML = `
-                <li>Enter 0 for components you didn't attempt</li>
-                <li>All scores should be entered as percentages (0-100)</li>
-                <li>Eligibility: ${currentCourse.eligibility}</li>
-                <li>Result is calculated based on the formula shown above</li>
-            `;
-        }
+    // info list
+    const infoList = document.getElementById('infoList');
+    infoList.innerHTML = `
+      <li>Enter 0 for components you didn't attempt</li>
+      <li>All scores are percentages (0–100) unless noted</li>
+      <li>Eligibility: ${currentCourse.eligibility}</li>
+      <li>Result follows the formula shown above</li>
+    `;
 
-        function calculateGrade() {
-            const inputs = document.querySelectorAll('#inputGrid input');
-            const values = Array.from(inputs).map(input => parseFloat(input.value) || 0);
-            
-            const totalScore = currentCourse.calculate(values);
-            const grade = getGradeFromScore(totalScore);
-            
-            document.getElementById('resultValue').textContent = totalScore.toFixed(2);
-            document.getElementById('resultGrade').textContent = `Grade: ${grade}`;
-            document.getElementById('resultSection').classList.add('active');
-        }
+    // pills (caps/bonus/etc)
+    const formulaBox = document.querySelector('.formula-display');
+    // remove old pills
+    formulaBox.querySelectorAll('.pill').forEach(p => p.remove());
+    if (currentCourse.pills && currentCourse.pills.length) {
+      currentCourse.pills.forEach(text => {
+        const pill = document.createElement('span');
+        pill.className = 'pill';
+        pill.textContent = text;
+        formulaBox.insertBefore(pill, document.getElementById('formulaDisplay'));
+      });
+    }
+  }
 
-        // Initialize the calculator
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeLevelButtons();
-            updateCourseOptions();
-        });
+  function calculateGrade() {
+    const inputs = Array.from(document.querySelectorAll('#inputGrid input'));
+    const values = inputs.map(input => {
+      const v = parseFloat(input.value);
+      return Number.isFinite(v) ? v : 0;
+    });
+    const totalScore = currentCourse.calculate(values);
+    const grade = getGradeFromScore(totalScore);
+
+    document.getElementById('resultValue').textContent = totalScore.toFixed(2);
+    const gradeLine = [
+      `Grade: ${grade}`,
+      `<span class="small-muted"> | Pass threshold: 40 (E)</span>`
+    ].join('');
+    document.getElementById('resultGrade').innerHTML = gradeLine;
+    document.getElementById('resultSection').classList.add('active');
+
+    // Add grade scale legend once
+    let legend = document.getElementById('gradeLegend');
+    if (!legend) {
+      legend = document.createElement('div');
+      legend.id = 'gradeLegend';
+      legend.className = 'hint';
+      legend.style.textAlign = 'center';
+      legend.style.marginTop = '10px';
+      legend.textContent = "Scale: S ≥90, A ≥80, B ≥70, C ≥60, D ≥50, E ≥40, else U";
+      document.getElementById('resultSection').appendChild(legend);
+    }
+  }
+
+  // wire button
+  window.calculateGrade = calculateGrade;
+
+  // init
+  document.addEventListener('DOMContentLoaded', () => {
+    initializeLevelButtons();
+    updateCourseOptions();
+  });
     </script>
 </body>
 </html>
